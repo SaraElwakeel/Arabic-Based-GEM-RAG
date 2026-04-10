@@ -1,4 +1,5 @@
 # Grand Egyptian Museum (GEM) Arabic Website QA System
+![GEM](https://github.com/user-attachments/assets/5285e2e3-ef69-4bcc-a770-c7c3597d1582)
 
 A fully local Arabic Question Answering system built specifically for the **official Grand Egyptian Museum (GEM) website**.
 
@@ -74,7 +75,18 @@ The following are **not included** in the final system scope:
   - `127.0.0.1:11434`
 
 ---
+### Streamlit output 
 
+## Sample Question 1
+<img width="1000" alt="Q1" src="https://github.com/user-attachments/assets/9673a9d7-d5ce-48ff-aa7f-b58eccfe7144" />
+
+## Sample Arabic Answer 1
+<img width="1000" alt="A1" src="https://github.com/user-attachments/assets/3f92c3ec-9052-447c-bcd7-f1e36acb86af" />
+
+## Sample Q&A 2
+<img width="1000" alt="QA-2" src="https://github.com/user-attachments/assets/dc5e0cdc-a0f8-409b-b9bb-e892972a432c" />
+
+---
 ## Project Structure
 
 ```text
