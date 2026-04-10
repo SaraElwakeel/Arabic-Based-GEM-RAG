@@ -1,95 +1,103 @@
-# Egyptian Museums RAG (Local + Ollama)
+# Grand Egyptian Museum (GEM) Arabic Website QA System
 
-A fully local Retrieval-Augmented Generation project for answering questions about major museums in Egypt from official museum websites.
+A fully local Arabic Question Answering system built specifically for the **official Grand Egyptian Museum (GEM) website**.
+
+This project retrieves information only from the **official Arabic pages of GEM**, then answers user questions in **Arabic only** using a local Retrieval-Augmented Generation (RAG) pipeline powered by **Ollama**.
+
+---
+
+## Project Scope
+
+This project is **strictly limited** to:
+
+- **Grand Egyptian Museum (GEM) only**
+- **Arabic question answering only**
+- **Official GEM website content only**
+- **Fully local execution**
+- **No paid APIs**
+- **No external web search**
+- **No general knowledge fallback**
+- **No guessing**
+
+### Important Note
+
+Earlier development versions of the project included experiments with content from other museum websites.  
+The current version has been **restricted and rebuilt to support GEM only**.
+
+The following are **not included** in the final system scope:
+
+- Egyptian Museum in Tahrir
+- National Museum of Egyptian Civilization (NMEC)
+- Any non-GEM website
+- Any external knowledge source
+
+---
 
 ## Features
-- Local LLM and embeddings through Ollama
-- Arabic-friendly website QA pipeline
-- Museum-focused crawling from official websites
-- Hybrid retrieval: BM25 + vector similarity
-- FastAPI endpoint and CLI tester
-- Source citations in the final answer
 
-## Target websites
-- GEM: https://gem.eg/ar/
-- Egyptian Museum in Tahrir (MOTA): https://mota.gov.eg/ar/%D8%A7%D9%84%D8%A2%D8%AB%D8%A7%D8%B1-%D9%88%D8%A7%D9%84%D9%85%D8%AA%D8%A7%D8%AD%D9%81/%D8%A7%D9%84%D9%85%D8%AC%D9%84%D8%B3-%D8%A7%D9%84%D8%A3%D8%B9%D9%84%D9%89-%D9%84%D9%84%D8%A2%D8%AB%D8%A7%D8%B1/%D8%AF%D9%84%D9%8A%D9%84-%D9%85%D8%AA%D8%A7%D8%AD%D9%81-%D8%A7%D9%84%D8%A2%D8%AB%D8%A7%D8%B1-%D8%A7%D9%84%D9%85%D9%81%D8%AA%D9%88%D8%AD%D8%A9-%D9%84%D9%84%D8%B2%D9%8A%D8%A7%D8%B1%D8%A9-%D8%AC%D8%AF%D9%8A%D8%AF/%D8%A7%D9%84%D9%85%D8%AA%D8%AD%D9%81-%D8%A7%D9%84%D9%85%D8%B5%D8%B1%D9%8A-%D8%A8%D8%A7%D9%84%D8%AA%D8%AD%D8%B1%D9%8A%D8%B1/
-- NMEC: https://nmec.gov.eg/ar/
+- Arabic-only QA interface
+- Retrieval from official GEM Arabic website pages only
+- Hybrid retrieval:
+  - BM25 keyword retrieval
+  - Local vector retrieval
+- Local embeddings via Ollama
+- Local answer generation via Ollama
+- Clean Streamlit GUI
+- Retrieved source display under each answer
+- Strict grounded prompting
+- Controlled fallback when information is not clearly supported
 
-## 1) Install
-```bash
-python -m venv .venv
-source .venv/bin/activate   # Linux/macOS
-# .venv\Scripts\activate    # Windows PowerShell
-pip install -r requirements.txt
-cp .env.example .env
-```
+---
 
-If you want Playwright fallback for dynamic pages:
-```bash
-playwright install
-```
+## Tech Stack
 
-## 2) Start Ollama and pull models
-```bash
-ollama serve
-ollama pull qwen3:4b
-ollama pull qwen3-embedding
-```
+### Programming Language
+- Python
 
-## 3) Build the corpus and indexes
-```bash
-python scripts/01_scrape_sites.py
-python scripts/02_prepare_chunks.py
-python scripts/03_build_indexes.py
-```
+### Retrieval / NLP
+- BeautifulSoup
+- rank-bm25
+- Local vector embeddings via Ollama
+- Local generation via Ollama
 
-## 4) Test from CLI
-```bash
-python scripts/04_ask_cli.py
-```
+### Interface
+- CLI
+- Streamlit GUI
+- FastAPI-ready project structure
 
-## 5) Run the API
-```bash
-uvicorn src.api.main:app --reload
-```
-Open: http://127.0.0.1:8000/docs
+### Local Models
+- **Chat model:** `qwen3:4b`
+- **Embedding model:** `qwen3-embedding:0.6b-fp16`
 
-## Project structure
+### Local Runtime
+- Ollama running locally on:
+  - `127.0.0.1:11434`
+
+---
+
+## Project Structure
+
 ```text
 museum_rag_project/
-├── data/
-│   ├── raw/
-│   ├── cleaned/
-│   ├── chunks/
-│   ├── index/
-│   └── cache/
+│
+├── app/
+│   ├── rag_core.py
+│   └── streamlit_app.py
+│
 ├── scripts/
+│   ├── 01_scrape_sites.py
+│   ├── 02_prepare_chunks.py
+│   ├── 03_build_indexes.py
+│   └── 04_ask_cli.py
+│
 ├── src/
-│   ├── api/
-│   ├── ingest/
-│   ├── processing/
+│   ├── config.py
 │   ├── retrieval/
 │   ├── service/
-│   └── utils/
-├── .env.example
+│   ├── generation/
+│   └── ...
+│
+├── data/
+├── indexes/
 ├── requirements.txt
 └── README.md
-```
-
-## Notes
-- The scraper is conservative and stays inside the target sites.
-- Some official pages may block simple requests. If that happens, set `USE_PLAYWRIGHT=true` in `.env`.
-- The system is grounded: if the answer is not found in retrieved content, it should say so.
-
-## API example
-POST `/ask`
-```json
-{
-  "question": "ما مواعيد زيارة المتحف القومي للحضارة المصرية؟"
-}
-```
-
-## Suggested next improvements
-- Add better Arabic reranking
-- Add page type classification (tickets / hours / exhibits / contact)
-- Add source freshness checks and recrawling schedule
